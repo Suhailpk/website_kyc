@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+  <h1>Send Mail</h1>
+
+  <form method="POST">
+
+    {% csrf_token %}
+  
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">To</label>
+      <input type="email" class="form-control" name="email" id="exampleFormControlInput1" placeholder="name@example.com">
+    </div>
+    <br>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Subject</label>
+      <input type="text" class="form-control" name="subject" id="exampleFormControlInput1" placeholder="Enter your subject">
+    </div>
+    <br>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Message</label>
+      <textarea class="form-control" name="message" id="exampleFormControlTextarea1" rows="3"></textarea>
+    </div>
+
+    <button type="submit">Send</button>
+  
+  </form>
+
+
+
+
+
+
+{% endblock content %}

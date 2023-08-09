@@ -1,0 +1,46 @@
+{% extends 'base2.html' %}
+
+
+{% block content %}
+<style>
+    
+    .approved {
+        color: green;
+
+    }
+    
+    .not-approved {
+        color: red;
+
+    }
+    </style>
+
+<div class="container">
+
+    <h1>Kyc status</h1>
+
+    
+    <div class="{% if Approve == 'Approved' %}approved{% else %}not-approved{% endif %}">
+        {% if Approve == 'Approved' %}
+        <h3>Your Kyc form {{Approve}} by admin</h3>
+        {% elif Approve == 'No data' %}
+        <h3>First you need to apply Kyc application form</h3>
+        {% elif Approve == 'Waiting' %}
+        <h3>Please be patient we'll check your kyc form</h3>
+        {% else %}
+        <h3>Your application rejected by admin</h3>
+
+        {% endif %}
+        
+
+    </div>
+
+
+    
+
+
+</div>
+
+
+
+{% endblock content %}

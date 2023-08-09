@@ -1,0 +1,6 @@
+
+
+- Change into file field from image field
+- After apply disable kyc form
+- change into date filed into calender
+- if rejected by admin user get notes for reason

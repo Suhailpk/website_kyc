@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="card">
+      <h2>Login</h2>
+      <div class="card-text">
+        {% if messages %}
+
+            {%  for message in messages %}
+            <div class="alert alert-info">
+                {{message}}
+            </div>
+            {% endfor %}
+
+        {% endif %}
+
+
+      </div>
+
+    
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <label for="username">Username</label>
+        <input type="text" name="username" placeholder="Enter your username">
+  
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="Enter your password">
+  
+        <button type="submit">Login</button>
+      </form>
+      <div class="switch">Don't have an account? <a href="{% url 'register' %}" onclick="switchCard()">Register here</a></div>
+    </div>
+  
+
+  </div>
+</div>
+
+{% endblock content %}

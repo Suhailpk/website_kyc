@@ -1,0 +1,44 @@
+{% extends 'base2.html' %}
+
+
+{% block content %}
+<!-- Add these lines in the <head> section of your HTML template -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  
+
+<div class="container">
+  <br>
+    <h1>KYC</h1>
+    <br>
+{% if kyc_submit == 'kyc_submitted' %}
+<h2 style="color: rgb(235, 154, 4);">You already submitted KYC form, To know your KYC status click <a href="{% url 'kycstatus' %}">Here</a></h2>
+{% else %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.user_hidden }}
+        {{ form.as_p}}
+
+
+    
+        <!-- Display the user identifier as non-editable text -->
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+{% endif %}
+</div>
+
+<!-- script after including jQuery and jQuery UI -->
+<script>
+  $(function() {
+      $("#datepicker").datepicker({
+          dateFormat: 'yy-mm-dd',  // Set the desired date format
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0",  // selection of the last 100 years
+      });
+  });
+</script>
+
+{% endblock content %}

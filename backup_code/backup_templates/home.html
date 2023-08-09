@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+
+<h1>Hello {{request.user}}</h1>
+
+<section class="bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p>ffdcd</p>
+            </div>
+        </div>
+    
+    </div>
+    
+
+</section>
+
+{% else %}
+
+<h1>Please Login to access this page</h1>
+
+
+{% endif %}
+
+{% endblock content %}
