@@ -1,0 +1,54 @@
+{% extends 'base/base2.html' %}
+
+
+{% block content %}
+<style>
+    
+    .approved {
+        color: green;
+
+    }
+    
+    .not-approved {
+        color: red;
+
+    }
+    </style>
+
+<div class="container">
+
+    <h1>Kyc status</h1>
+
+    
+    <div class="{% if Approve == 'Approved' %}approved{% else %}not-approved{% endif %}">
+        {% if Approve == 'Approved' %}
+        <h3>Approved Successfully</h3>
+        {% elif Approve == 'Resubmit' %}
+        <h3>Resubmit Successfully</h3>
+        <h4>Click <a href="{% url 'kyclists' %}">Here</a> to be redirected to KYC approvals </h4>
+        {% else %}
+        <h3>Rejected Successfully</h3>
+        
+        {{form.as_p}}
+
+
+
+        <h4>Send email explaining the reasons for the rejection click <a href="{% url 'mail' %}">Here</a></h4>
+ 
+        
+
+        {% endif %}
+        
+
+    </div>
+    {% if not Approve == 'Resubmit' %}
+    <a href="javascript:history.back()" class="btn btn-primary mt-3">Go Back</a>
+    {% endif %}
+    
+
+
+</div>
+
+
+
+{% endblock content %}

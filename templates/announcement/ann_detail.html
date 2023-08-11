@@ -1,0 +1,50 @@
+{% extends 'base/base2.html' %}
+
+{% block content %}
+
+<div class="container">
+    <br>
+    <h1>Announcement Details</h1>
+    <br>
+
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">Announcement Subject</th>
+            <th scope="col">Message</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End date</th>
+            <th scope="col">Image</th>
+            <th scope="col">Visible to</th>
+            <th scope="col">Is read</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if anndetails %}
+            <tr>
+                <td>{{ anndetails.subject }}</td>
+                <td>{{ anndetails.message }}</td>
+                <td>{{ anndetails.start_date }}</td>
+                <td>{{ anndetails.end_date }}</td>
+                <td>{{ anndetails.image }}</td>
+                <td>
+                    <select class="form-select">
+                        {% for user in anndetails.visible_to.all %}
+                            <option>{{ user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>{{ anndetails.is_read }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">
+                    <h3>No Announcement</h3>
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

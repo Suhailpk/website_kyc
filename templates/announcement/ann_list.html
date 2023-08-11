@@ -1,0 +1,50 @@
+{% extends 'base/base2.html' %}
+
+
+{% block content %}
+
+<div class="container">
+<br>
+
+<h1>Announcement</h1>
+<br>
+
+<a href="{% url 'anncreate' %}">Create</a>
+
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">Announcement Subject</th>
+            <th scope="col">Actions</th>
+
+        </tr>
+        </thead>
+        <tbody>
+
+
+            {% for annlist in annlists %}
+                <tr>
+         
+                    <td>{{annlist.subject}}</td>
+
+                    <td><a href="{% url 'anndetail' annlist.id %}">View</a> 
+                        <a href="{% url 'annupdate' annlist.id %}">Update</a>
+                        <a href="{% url 'anndelete' annlist.id %}">Delete</a></td>
+   
+                    {% empty %}
+                    <h3>No </h3>
+                    {% endfor %}
+                </tr>
+                     
+                
+        </tbody>
+    </table>
+    
+
+
+
+</div>
+
+
+
+{% endblock content %}

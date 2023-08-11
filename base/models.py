@@ -23,6 +23,8 @@ class Kyc(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=10)
     nationality = models.CharField(max_length=50)
     address = models.TextField()
     passport = models.FileField(upload_to='kyc_documents/',validators=[file_size])
@@ -35,11 +37,6 @@ class Kyc(models.Model):
     def __str__(self) -> str:
         return self.full_name
     
-
-
-
-
-
 
 
 

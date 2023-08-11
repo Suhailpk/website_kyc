@@ -1,0 +1,24 @@
+{% extends 'base/base2.html' %}
+
+
+{% block content %}
+
+<div class="container">
+<br>
+
+<h1>Announcement Delete</h1>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <h3>Are you sure want to delete {{anndetails}}</h3>
+
+    <button type="submit">Delete</button>
+</form>
+
+
+
+</div>
+
+
+
+{% endblock content %}

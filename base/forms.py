@@ -17,6 +17,8 @@ class KycForm(forms.ModelForm):
             'full_name': forms.TextInput(attrs={'class':'form-control'}),
             'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'nationality': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class':'form-control'}),
             'address': forms.TextInput(attrs={'class':'form-control'}),
             'passport': forms.FileInput(attrs={'class':'form-control'}),
             'aadhaar': forms.FileInput(attrs={'class':'form-control'}),
@@ -24,7 +26,7 @@ class KycForm(forms.ModelForm):
         }
 
 
-    
+
 
 
     

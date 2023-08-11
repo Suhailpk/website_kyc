@@ -25,13 +25,13 @@ from django.shortcuts import get_object_or_404
 class HomeView(View):
 
     def get(self, request):
-        return render(request, 'index.html', {})
+        return render(request, 'base/index.html', {})
 
 
 class LoginView(View):
 
     def get(self, request):
-        return render(request, 'login.html', {})
+        return render(request, 'base/login.html', {})
 
     def post(self, request):
         username = request.POST.get('username')
@@ -73,7 +73,7 @@ class LoginView(View):
 class RegisterView(View):
 
     def get(self, request):
-        return render(request, 'register.html')
+        return render(request, 'base/register.html')
 
     def post(self, request):
         username = request.POST.get('username')
@@ -103,20 +103,20 @@ class RegisterView(View):
         except Exception as e:
             print(e)
 
-        return render(request, 'register.html')
+        return render(request, 'base/register.html')
 
 
 
 class TokenView(View):
 
     def get(self, request):
-        return render(request, 'token.html')
+        return render(request, 'base/token.html')
     
 
 class SuccessView(View):
 
     def get(self, request):
-        return render(request, 'success2.html')
+        return render(request, 'base/success2.html')
 
 
 
@@ -157,12 +157,12 @@ class VerifyView(View):
 class ErrorView(View):
 
     def get(self, request):
-        return render(request, 'error.html')
+        return render(request, 'base/error.html')
     
 
 
 class SendMailView(LoginRequiredMixin, FormView):
-    template_name = 'mail.html'
+    template_name = 'base/mail.html'
     form_class = EmailForm
     success_url = 'success'
 
@@ -180,33 +180,33 @@ class SendMailView(LoginRequiredMixin, FormView):
 
 
         context = {'email': email}
-        return render(self.request, 'success.html', context)
+        return render(self.request, 'base/success.html', context)
     
 
 class AboutView(View):
 
     def get(self, request):
-        return render(request, 'about.html')
+        return render(request, 'base/about.html')
     
 
 
 class PortFolioView(View):
 
     def get(self, request):
-        return render(request, 'portfolio.html')
+        return render(request, 'base/portfolio.html')
 
 
 class TeamView(View):
 
     def get(self, request):
-        return render(request, 'team.html')
+        return render(request, 'base/team.html')
     
 
 #Kyc Views
 
 
 class KycView(LoginRequiredMixin, View):
-    template_name = 'kyc.html'
+    template_name = 'base/kyc.html'
     
     
     def get(self, request):
@@ -229,7 +229,7 @@ class KycView(LoginRequiredMixin, View):
 
 class KycStatus(LoginRequiredMixin, View):
     
-    template_name = 'kycstatus.html'
+    template_name = 'base/kycstatus.html'
 
     def get(self, request):
         user = request.user
@@ -237,6 +237,8 @@ class KycStatus(LoginRequiredMixin, View):
         kyc_waiting = Kyc.objects.filter(user=user, approved=False, waiting=False).exists()
         kyc_wait_rejected = Kyc.objects.filter(user=user, approved=False, waiting=True).exists()
         kyc_approved = Kyc.objects.filter(user=user, approved=True, waiting=True).exists()
+        
+
 
         if kyc_count == 0:
             context = {'Approve': 'No data'}
@@ -259,7 +261,7 @@ class KycStatus(LoginRequiredMixin, View):
 
 
 class SuccessKycView(View):
-    template_name = 'successkyc.html'
+    template_name = 'base/successkyc.html'
     
     def get(self, request):
         return render(request, self.template_name)
@@ -269,7 +271,7 @@ class SuccessKycView(View):
 class KycChoose(LoginRequiredMixin,View):
     
     def get(self, request):
-        return render(request, 'kycchoose.html')
+        return render(request, 'base/kycchoose.html')
     
     def post(self, request):
         if 'kyc_apply' in request.POST:
@@ -283,13 +285,15 @@ class KycChoose(LoginRequiredMixin,View):
 
 class KycList(ListView):
     model = Kyc
-    template_name = 'kyclist.html'
+    template_name = 'base/kyclist.html'
     context_object_name = 'kyc_lists'
 
 class KycDetail(DetailView):
     model = Kyc
-    template_name = 'kycdetails.html'
+    template_name = 'base/kycdetails.html'
     context_object_name = 'kyc_list'
+
+
 
     def post(self, request, *args, **kwargs):
         kyc_instance = self.get_object()
@@ -299,7 +303,7 @@ class KycDetail(DetailView):
                 kyc_instance.approved = True
                 kyc_instance.waiting = True
                 kyc_instance.save()
-                return render(request, 'kycadmin.html',{'Approve':'Approved'})
+                return render(request, 'base/kycadmin.html',{'Approve':'Approved'})
             else:
                 return HttpResponse('<h1>You do not have permission to approve<h1/>')
 
@@ -307,18 +311,27 @@ class KycDetail(DetailView):
             if request.user.is_staff: 
                 kyc_instance.approved = False
                 kyc_instance.waiting = True
-                kyc_instance.submitted = False
+                #kyc_instance.submitted = False
                 kyc_instance.save()
-                return render(request, 'kycadmin.html',{'Approve':'Rejected'})
+                return render(request, 'base/kycadmin.html',{'Approve':'Rejected'})
             
         elif 'resubmit' in request.POST:
             if request.user.is_staff: 
                 kyc_instance.delete()
-                return render(request, 'kycadmin.html',{'Approve':'Resubmit'})
+                return render(request, 'base/kycadmin.html',{'Approve':'Resubmit'})
             else:
                 return HttpResponse('<h1>You do not have permission to reject<h1/>')
 
         return HttpResponse('Invalid action')
+    
+
+
+
+
+
+    
+
+
     
 
 
