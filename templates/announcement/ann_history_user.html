@@ -1,0 +1,37 @@
+{% extends 'base/base2.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Announcements History</h1>
+    {% if announcements %}
+    <div class="row">
+        {% for announcnement in announcements %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    {% if announcnement.announc.image %}
+                        <img src="{{ announcnement.announc.image.url }}" alt="{{ announcement.subject }}" class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{announcnement.announc.subject}}</h5>
+                        <p class="card-text">{{announcnement.announc.message}}</p>
+                        <p class="card-text"><strong>Start Date:</strong> {{announcnement.announc.start_date}}</p>
+                        <p class="card-text"><strong>End Date:</strong> {{announcnement.announc.end_date}}</p>
+
+                        {% if not announcnement.is_read %}
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <button name="mark">Mark as read</button>
+                        </form>
+                            
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+</div>
+{%  else %}
+<h2>No new announcements history</h2>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base/base2.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Announcements</h1>
+    {% if announcements %}
+    <div class="row">
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    {% if announcements.announc.image %}
+                        <img src="{{ announcements.announc.image.url }}" alt="{{ announcements.announc.subject }}" class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ announcements.announc.subject }}</h5>
+                        <p class="card-text">{{ announcements.announc.message }}</p>
+                        <p class="card-text"><strong>Start Date:</strong> {{ announcements.announc.start_date }}</p>
+                        <p class="card-text"><strong>End Date:</strong> {{ announcements.announc.end_date }}</p>
+                        {% if announcements.announc.is_read %}
+                            <button class="btn btn-secondary" disabled>Read</button>
+                        {% else %}
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <button name="mark">Mark as read</button>
+                        </form>
+                            
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+    </div>
+    
+</div>
+{%  else %}
+<h2>No new announcements</h2>
+<a href="{% url 'annhistory' %}" class="btn btn-primary">Announcement History</a>
+{% endif %}
+{% endblock %}
