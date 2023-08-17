@@ -16,4 +16,6 @@ urlpatterns = [
     path('annmarkupdate/<int:pk>', views.AnnMarkReadUpdate.as_view(),name='annmarkupdate'),
     path('annviews/', views.AnnUserView.as_view(),name='annviews'),
     path('annhistory/', views.AnnHistory.as_view(),name='annhistory'),
+    path('export_selected/', views.ExportSelectedAnnouncements.as_view(), name='export_selected'),
+    path('csv/', views.CsvList.as_view(), name='csv'),
 ]

@@ -1,0 +1,46 @@
+{% extends 'base/base2.html' %}
+
+
+{% block content %}
+
+<br>
+
+<div class="container">
+    <h1>Announcement List</h1>
+<br>
+
+<form method="post" action="{% url 'export_selected' %}">
+    {% csrf_token %}
+    <div class="checkbox-container">
+        <input type="checkbox" id="select-all-checkbox">
+        <label for="select-all-checkbox"><h4>Select All</h4></label>
+    </div>
+    {% for announcement in csvlists %}
+        <div class="checkbox-container">
+            <input type="checkbox" id="announcement_{{ announcement.id }}" name="selected_ids[]" value="{{ announcement.id }}">
+            <label class="checkbox-label" for="announcement_{{ announcement.id }}">{{ announcement.subject }}</label>
+        </div>
+    {% endfor %}
+    <br>
+    <button class="btn btn-primary" type="submit">Export Selected Announcements</button>
+</form>
+
+
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectAllCheckbox = document.getElementById("select-all-checkbox");
+        const announcementCheckboxes = document.querySelectorAll('input[name="selected_ids[]"]');
+        
+        selectAllCheckbox.addEventListener("change", function() {
+            const isChecked = selectAllCheckbox.checked;
+            announcementCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = isChecked;
+            });
+        });
+    });
+    </script>
+
+{% endblock content %}

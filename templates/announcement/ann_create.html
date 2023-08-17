@@ -1,6 +1,10 @@
 {% extends 'base/base2.html' %}
 
 {% block content %}
+<!-- Add these lines in the <head> section of your HTML template -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <div class="container">
     <h1>Announcement Create</h1>
@@ -11,12 +15,33 @@
 
         {{form.as_p}}
 
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
 
     </form>
 
 
 </div>
+
+<!-- script after including jQuery and jQuery UI -->
+<script>
+    $(function() {
+        $("#datepicker").datepicker({
+            dateFormat: 'yy-mm-dd',  // Set the desired date format
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-100:+0",  // selection of the last 100 years
+        });
+    });
+
+    $(function() {
+        $("#datepicker2").datepicker({
+            dateFormat: 'yy-mm-dd',  // Set the desired date format
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-100:+0",  // selection of the last 100 years
+        });
+    });
+  </script>
 
 
 

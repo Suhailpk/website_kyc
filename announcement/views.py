@@ -9,22 +9,16 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils import timezone
+import datetime
+import csv
+import zipfile
+from io import BytesIO
 
 
 
 # Create your views here.
 
-'''class Announcement(View):
 
-    def get(self,request):
-        form = AnnTableForm()
-        return render(request,'announcement/announcement.html',{'form':form})
-    
-    def post(self, request):
-        form = AnnTableForm(request.POST)
-        if form.is_valid():
-            form.save()
-        return render(request,'announcement/announcement.html',{'form':form})'''
 
 
 class AnnList(ListView):
@@ -47,18 +41,6 @@ class AnnCreate(CreateView):
 
 
 
-'''class AnnCreate(View):
-
-    def get(self,request):
-        form = AnnTableForm()
-        return render(request,'announcement/ann_create.html', {'form':form})
-    
-    def post(self,requset):
-        form = AnnTableForm(data=requset.POST, files=requset.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('annlist')
-        return render(requset,'announcement/ann_create.html', {'form':form})'''
 
 
 
@@ -71,6 +53,10 @@ class AnnUpdate(UpdateView):
 
 def __str__(self):
         return self.announc.subject
+
+
+
+
 class AnnDelete(DeleteView):
     model = Ann_table
     template_name = 'announcement/ann_delete.html'
@@ -107,93 +93,32 @@ class AnnMarkReadUpdate(UpdateView):
     template_name = 'announcement/ann_mark_create.html'
     success_url = reverse_lazy('annlist')
 
-'''class AnnUserView(View):
-    
-    def get(self, request):
-        user = request.user
-        print('====================',user.id)
-        announcements = Ann_table.objects.filter(visible_to=user.id,is_read=False)
-        return render(request, 'announcement/ann_view_user.html',{'announcements':announcements})
-    
-    def post(self, request):
-        user = request.user
-        if 'mark' in request.POST:
-            ann = Ann_table.objects.get(visible_to=user.id)
-            ann.is_read = True
-            ann.save()
-            ann.visible_to.exclude(id=user.id).update(is_read=False)
-            return redirect('annviews')'''
-    
-
-
     
 
 class AnnUserView(View):
 
     def get(self, request):
         user = request.user
-        #announcements = AnnMarkRead.objects.get(user=user.id)
-        announcements = AnnMarkRead.objects.filter(user=user.id,is_read=False)
-        print('-----------------------',announcements)
+        #current_date = datetime.datetime.now().date()
+        now  = timezone.now()
+        #start_date = now - timezone.timedelta(days=7)
+        #end_date = now
+
+        announcements = AnnMarkRead.objects.filter(user=user.id,is_read=False,announc__start_date__lte=now,announc__end_date__gte=now)
+        
+        print('===================',now)
         return render(request, 'announcement/ann_view_user.html',{'announcements':announcements})
     
     def post(self, request):
         user = request.user
         if 'mark' in request.POST:
             announcement_id = request.POST.get('announcement_id')
-            #announcement = get_object_or_404(Ann_table, id=announcement_id)
-            
-            # Check if the user has already marked this announcement as read
-            print("user----",user)
             ann_mark = get_object_or_404(AnnMarkRead, announc_id=announcement_id, user=user.id)
-            print('-----------',ann_mark)
-            #if not ann_mark.is_read:
             ann_mark.is_read = True
             ann_mark.save()
                 
         return redirect('annviews')
     
-
-    '''def post(self, request):
-        user = request.user
-        if 'mark' in request.POST:
-            announcement_ids = request.POST.getlist('announcement_ids')
-            print('3333333333333333333333333',announcement_ids)
-            for announcement_id in announcement_ids:
-                announcement = get_object_or_404(Ann_table, pk=announcement_id)
-                if not announcement.is_read_by_user(user):
-                    AnnMarkRead.objects.create(announcement=announcement, user=user, is_read=True, read_at=timezone.now())
-            return redirect('annviews')'''
-'''ann = Ann_table.objects.get(visible_to=user.id)
-            ann.is_read = True
-            ann.save()
-            print('===================================================',ann)
-            
-            #ann.save()
-            #ann.visible_to.exclude(id=user.id).update(is_read=False)
-            return redirect('annviews')'''
-
-
-
-
-'''class AnnUserReadView(View):
-
-    def get(self, request):
-        user = request.user
-        announcements = AnnUserRead.objects.filter(user_read=user.id,is_read=False)
-        print(']]]]]]]]]]]]]]]]]]]]]]]]]]]',announcements)
-        return render(request, 'announcement/ann_view_user.html',{'announcements':announcements})
-    
-
-    def post(self,request):
-        user = request.user
-        if 'mark' in request.POST:
-            ann = AnnUserRead.objects.get(user_read=user.id)
-            ann.is_read = True
-            ann.save()
-            return redirect('annviews')'''
-
-
 
 class AnnHistory(View):
 
@@ -205,7 +130,29 @@ class AnnHistory(View):
 
 
 
+class ExportSelectedAnnouncements(View):
+    def post(self, request):
+        selected_ids = request.POST.getlist('selected_ids[]')
+        selected_announcements = Ann_table.objects.filter(id__in=selected_ids)
 
+        # Create a BytesIO object to store the zip data
+        zip_buffer = BytesIO()
 
-        
+        with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+            csv_data = "Subject,Message,Start Date,End Date\n"
+            
+            for announcement in selected_announcements:
+                csv_data += f"{announcement.subject},{announcement.message},{announcement.start_date},{announcement.end_date}\n"
 
+            zip_file.writestr('selected_announcements.csv', csv_data)
+
+        response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="selected_announcements.zip"'
+        return response
+    
+
+class CsvList(ListView):
+    model = Ann_table
+    context_object_name = 'csvlists'
+    template_name = 'announcement/ann_csv.html'
+    

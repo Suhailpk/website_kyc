@@ -14,8 +14,6 @@
                     <div class="card-body">
                         <h5 class="card-title">{{announcnement.announc.subject}}</h5>
                         <p class="card-text">{{announcnement.announc.message}}</p>
-                        <p class="card-text"><strong>Start Date:</strong> {{announcnement.announc.start_date}}</p>
-                        <p class="card-text"><strong>End Date:</strong> {{announcnement.announc.end_date}}</p>
                         {% if announcement.is_read %}
                             <button class="btn btn-secondary" disabled>Read</button>
                         {% else %}
