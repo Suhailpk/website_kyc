@@ -1,57 +1,74 @@
 {% extends 'base/base2.html' %}
 
-
 {% block content %}
-
-
 <div class="container">
-<br>
+    <br>
+    <h1>Announcement</h1>
+    <br>
+    <a href="{% url 'anncreate' %}"><h4>Create New Announcement</h4></a>
 
-<h1>Announcement</h1>
-<br>
+    <form method="post" action="{% url 'export_selected' %}">
+        {% csrf_token %}
 
-<a href="{% url 'anncreate' %}">Create</a>
-<a href="{% url 'csv' %}">Export CSV</a>
-
-
-    <table class="table table-striped table-hover table-bordered">
-        <thead class="table-dark">
-        <tr>
-            <th scope="col">Announcement Subject</th>
-            <th scope="col">Actions</th>
-
-        </tr>
-        </thead>
-        <tbody>
-
-
-            {% for annlist in annlists %}
+        <table class="table table-striped table-hover table-bordered">
+            <thead class="table-dark">
                 <tr>
-         
-                    <td>{{annlist.subject}}</td>
-
-                    <td><a href="{% url 'anndetail' annlist.id %}">View</a> 
+                    <th scope="col">S.No.</th> 
+                    <th scope="col"><div class="checkbox-container">
+                        <input type="checkbox" id="select-all-checkbox">
+                        <label for="select-all-checkbox">Select All</label>
+                    </div></th>
+                    <!-- Number column added -->
+                    <th scope="col">Announcement Subject</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for annlist in annlists %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="announcement_{{ annlist.id }}" name="selected_ids[]" value="{{ annlist.id }}">
+                            <label class="checkbox-label" for="announcement_{{ annlist.id }}"></label>
+                        </div>
+                    </td>
+                    <td>{{ annlist.subject }}</td>
+                    <td>{{annlist.start_date}}</td>
+                    <td>{{annlist.end_date}}</td>
+                    <td>
+                        <a href="{% url 'anndetail' annlist.id %}">View</a>
                         <a href="{% url 'annupdate' annlist.id %}">Update</a>
                         <a href="{% url 'anndelete' annlist.id %}">Delete</a>
-
-
-                        
-
-                        
-   
-                    {% empty %}
-                    <h3>No </h3>
-                    {% endfor %}
+                    </td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4"><h3>No announcements</h3></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
 
-                
-        </tbody>
-    </table>
-    
-
-
+        <button class="btn btn-primary" type="submit">Export Selected Announcements</button>
+    </form>
 </div>
 
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectAllCheckbox = document.getElementById("select-all-checkbox");
+        const announcementCheckboxes = document.querySelectorAll('input[name="selected_ids[]"]');
+        
+        selectAllCheckbox.addEventListener("change", function() {
+            const isChecked = selectAllCheckbox.checked;
+            announcementCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = isChecked;
+            });
+        });
+    });
+</script>
 
 {% endblock content %}

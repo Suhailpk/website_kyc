@@ -10,9 +10,11 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils import timezone
 import datetime
-import csv
 import zipfile
 from io import BytesIO
+from django.contrib.auth.mixins import LoginRequiredMixin
+import csv
+from io import StringIO
 
 
 
@@ -21,19 +23,19 @@ from io import BytesIO
 
 
 
-class AnnList(ListView):
+class AnnList(LoginRequiredMixin, ListView):
     model = Ann_table
     context_object_name = 'annlists'
     template_name = 'announcement/ann_list.html'
 
 
-class AnnDetail(DetailView):
+class AnnDetail(LoginRequiredMixin,DetailView):
     model = Ann_table
     context_object_name = 'anndetails'
     template_name = 'announcement/ann_detail.html'
 
 
-class AnnCreate(CreateView):
+class AnnCreate(LoginRequiredMixin,CreateView):
     model = Ann_table
     template_name  = 'announcement/ann_create.html'
     form_class = AnnTableForm
@@ -43,9 +45,7 @@ class AnnCreate(CreateView):
 
 
 
-
-
-class AnnUpdate(UpdateView):
+class AnnUpdate(LoginRequiredMixin,UpdateView):
     model = Ann_table
     template_name  = 'announcement/ann_create.html'
     form_class = AnnTableForm
@@ -57,7 +57,7 @@ def __str__(self):
 
 
 
-class AnnDelete(DeleteView):
+class AnnDelete(LoginRequiredMixin,DeleteView):
     model = Ann_table
     template_name = 'announcement/ann_delete.html'
     context_object_name = 'anndetails'
@@ -95,7 +95,7 @@ class AnnMarkReadUpdate(UpdateView):
 
     
 
-class AnnUserView(View):
+class AnnUserView(LoginRequiredMixin,View):
 
     def get(self, request):
         user = request.user
@@ -120,13 +120,16 @@ class AnnUserView(View):
         return redirect('annviews')
     
 
-class AnnHistory(View):
+class AnnHistory(LoginRequiredMixin,View):
 
     def get(self, request):
         user = request.user
         announcements = AnnMarkRead.objects.filter(user=user.id, is_read=True)
         return render(request, 'announcement/ann_history_user.html',{'announcements':announcements})
     
+
+
+
 
 
 
@@ -139,20 +142,39 @@ class ExportSelectedAnnouncements(View):
         zip_buffer = BytesIO()
 
         with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-            csv_data = "Subject,Message,Start Date,End Date\n"
-            
-            for announcement in selected_announcements:
-                csv_data += f"{announcement.subject},{announcement.message},{announcement.start_date},{announcement.end_date}\n"
+            chunk_size = 5  # Number of announcements per CSV file
 
-            zip_file.writestr('selected_announcements.csv', csv_data)
+            for chunk_start in range(0, len(selected_announcements), chunk_size):
+                chunk_end = chunk_start + chunk_size
+                chunk = selected_announcements[chunk_start:chunk_end]
+                
+                csv_data = StringIO()
+                csv_writer = csv.writer(csv_data)
+                csv_writer.writerow(["Subject", "Message", "Start Date", "End Date"])
+
+                for announcement in chunk:
+                    csv_writer.writerow([
+                        announcement.subject,
+                        announcement.message,
+                        announcement.start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                        announcement.end_date.strftime("%Y-%m-%d %H:%M:%S")
+                    ])
+
+                csv_data.seek(0)  # Reset the StringIO position
+
+                file_name = f'selected_announcements_{chunk_start}-{chunk_end}.csv'
+                zip_file.writestr(file_name, csv_data.read())
 
         response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename="selected_announcements.zip"'
         return response
+
+
+
     
 
-class CsvList(ListView):
+'''class CsvList(ListView):
     model = Ann_table
     context_object_name = 'csvlists'
-    template_name = 'announcement/ann_csv.html'
+    template_name = 'announcement/ann_csv.html'''
     
